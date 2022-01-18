@@ -30,9 +30,9 @@ class EMC_Test(unittest.TestCase):
     def test_parse_inpcar(self):
         kpt, stepsize, band, prg, basis = emc.parse_inpcar(self.inpcar_fh, debug=False) # will need stepsize later
         self.assertListEqual(kpt, [0.0, 0.0, 0.0], msg='Failed to parse K-point')
-        self.assertEquals(stepsize, 0.01, msg='Failed to parse stepsize')
-        self.assertEquals(band, 16, msg='Failed to parse band')
-        self.assertEquals(prg, 'V', msg='Failed to parse program identifier')
+        self.assertEqual(stepsize, 0.01, msg='Failed to parse stepsize')
+        self.assertEqual(band, 16, msg='Failed to parse band')
+        self.assertEqual(prg, 'V', msg='Failed to parse program identifier')
         self.assertListEqual(basis, [[5.648, 0.0, 0.0],[0.0, 5.648, 0.0],[0.0, 0.0, 5.648]], msg='Failed to parse basis')
 
     def test_calculate_effmass(self):
@@ -53,7 +53,7 @@ class EMC_Test(unittest.TestCase):
 
         self.kpoints_fh.readline() # title
         nkpt = int(self.kpoints_fh.readline()) # Reciprocal
-        self.assertEquals(nkpt, len(kpts), msg='Length of the list is not equal to the number from KPOINTS')
+        self.assertEqual(nkpt, len(kpts), msg='Length of the list is not equal to the number from KPOINTS')
         self.kpoints_fh.readline() # Reciprocal
 
         for i in range(len(kpts)):

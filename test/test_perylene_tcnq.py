@@ -30,9 +30,9 @@ class EMC_Test(unittest.TestCase):
     def test_parse_inpcar(self):
         kpt, stepsize, band, prg, basis = emc.parse_inpcar(self.inpcar_fh, debug=False) # will need stepsize later
         self.assertListEqual(kpt, [0.0, 0.0, 0.0], msg='Failed to parse K-point')
-        self.assertEquals(stepsize, 0.01, msg='Failed to parse stepsize')
-        self.assertEquals(band, 1, msg='Failed to parse band')
-        self.assertEquals(prg, 'C', msg='Failed to parse program identifier')
+        self.assertEqual(stepsize, 0.01, msg='Failed to parse stepsize')
+        self.assertEqual(band, 1, msg='Failed to parse band')
+        self.assertEqual(prg, 'C', msg='Failed to parse program identifier')
         self.assertListEqual(basis, [[13.8324582, -0.0965703, 0.0],[0.0, 27.4955152, 0.0],[0.0, 0.0, 20.5602203]], msg='Failed to parse basis')
 
     def test_calculate_effmass(self):
@@ -44,10 +44,10 @@ class EMC_Test(unittest.TestCase):
         self.assertListAlmostEqual(m[1], [0.04464, -0.45875, 0.0], places=5, msg='Failed to calculate effective mass tensor')
         self.assertListAlmostEqual(m[2], [0.0, 0.0, -0.67875], places=5, msg='Failed to calculate effective mass tensor')
 
-        print ''
-        print 'Effective mass values and directions for Perylene-TCNQ crystal'
-        print 'are tested against data computed in the JLB group'
-        print ''
+        print('')
+        print('Effective mass values and directions for Perylene-TCNQ crystal')
+        print('are tested against data computed in the JLB group')
+        print('')
         masses, vecs_cart, vecs_frac, vecs_n = emc.get_eff_masses(m, basis)
         self.assertListAlmostEqual(masses, [-0.808, -1.473, -2.192], places=3, msg='Effective mass calculations failed')
         self.assertListAlmostEqual(vecs_n[0], [1.0, -0.02531, 0.0], places=5, msg='Effective mass direction 1 failed')
@@ -60,7 +60,7 @@ class EMC_Test(unittest.TestCase):
 
         self.kpoints_fh.readline() # title
         nkpt = int(self.kpoints_fh.readline()) # Reciprocal
-        self.assertEquals(nkpt, len(kpts), msg='Length of the list is not equal to the number from KPOINTS')
+        self.assertEqual(nkpt, len(kpts), msg='Length of the list is not equal to the number from KPOINTS')
         self.kpoints_fh.readline() # Reciprocal
 
         for i in range(len(kpts)):

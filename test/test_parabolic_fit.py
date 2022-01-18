@@ -16,7 +16,7 @@ class EMC_Test(unittest.TestCase):
         self.inpcar_fh.close()
     #
     def test_parabolic_fit(self):
-        print ""
+        print("")
         kpt, stepsize, band, prg, basis = emc.parse_inpcar(self.inpcar_fh, debug=False) # will need stepsize later
         st = []
         st.append([-5.0, -5.0, 0.0])

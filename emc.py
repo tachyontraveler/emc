@@ -116,12 +116,12 @@ def jacobi(ainput):
     n = len(a)
     m = len(a[0])
     if n != m:
-        raise 'jacobi: Matrix must be square'
+        raise ValueError('jacobi: Matrix must be square')
     #
     for i in range(n):
         for j in range(m):
             if a[i][j] != a[j][i]:
-                raise 'jacobi: Matrix must be symmetric'
+                raise ValueError('jacobi: Matrix must be symmetric')
     #
     tolmin = 1e-14
     tol = 1e-4
@@ -180,7 +180,7 @@ def jacobi(ainput):
         tol = max(tolmin,tol*0.99e-2)
     #
     if nrot != 0:
-        print 'jacobi: [WARNING] Jacobi iteration did not converge in 50 passes!'
+        print('jacobi: [WARNING] Jacobi iteration did not converge in 50 passes!')
     #
     # Sort eigenvectors and values into increasing order
     e = [0.0 for i in range(n)] # zerovector
@@ -211,10 +211,10 @@ def fd_effmass_st3(e, h):
     m[2][0] = m[0][2]
     m[2][1] = m[1][2]
     #
-    print '-> fd_effmass_st3: Effective mass tensor:\n'
+    print('-> fd_effmass_st3: Effective mass tensor:\n')
     for i in range(len(m)):
-        print '%15.8f %15.8f %15.8f' % (m[i][0], m[i][1], m[i][2])
-    print ''
+        print(('%15.8f %15.8f %15.8f' % (m[i][0], m[i][1], m[i][2])))
+    print('')
     #
     return m
 
@@ -237,10 +237,10 @@ def fd_effmass_st5(e, h):
     m[2][0] = m[0][2]
     m[2][1] = m[1][2]
     #
-    print '-> fd_effmass_st5: Effective mass tensor:\n'
+    print('-> fd_effmass_st5: Effective mass tensor:\n')
     for i in range(3):
-        print '%15.8f %15.8f %15.8f' % (m[i][0], m[i][1], m[i][2])
-    print ''
+        print(('%15.8f %15.8f %15.8f' % (m[i][0], m[i][1], m[i][2])))
+    print('')
     #
     return m
 
@@ -252,7 +252,7 @@ def generate_kpoints(kpt_frac, st, h, prg, basis):
     basis_r = [[ m[i][j]*2.0*pi for j in range(3) ] for i in range(3) ]
     #
     kpt_rec = MAT_m_VEC(T(basis_r), kpt_frac)
-    print '-> generate_kpoints: K-point in reciprocal coordinates: %5.3f %5.3f %5.3f' % (kpt_rec[0], kpt_rec[1], kpt_rec[2])
+    print(('-> generate_kpoints: K-point in reciprocal coordinates: %5.3f %5.3f %5.3f' % (kpt_rec[0], kpt_rec[1], kpt_rec[2])))
     #
     if prg == 'V' or prg == 'P':
         h = h*(1/Bohr) # [1/A]
@@ -310,9 +310,9 @@ def parse_EIGENVAL_VASP(eigenval_fh, band, diff2_size, debug=False):
     eigenval_fh.readline()
     #
     nelec, nkpt, nband = [int(s) for s in eigenval_fh.readline().split()]
-    if debug: print 'From EIGENVAL: Number of the valence band is %d (NELECT/2)' % (nelec/2)
+    if debug: print(('From EIGENVAL: Number of the valence band is %d (NELECT/2)' % (nelec/2)))
     if band > nband:
-        print 'Requested band (%d) is larger than total number of the calculated bands (%d)!' % (band, nband)
+        print(('Requested band (%d) is larger than total number of the calculated bands (%d)!' % (band, nband)))
         sys.exit(1)
 
     energies = []
@@ -324,7 +324,7 @@ def parse_EIGENVAL_VASP(eigenval_fh, band, diff2_size, debug=False):
             if band == j:
                 energies.append(float(line.split()[1])*ev2h)
 
-    if debug: print ''
+    if debug: print('')
     return energies
 #
 def parse_nscf_PWSCF(eigenval_fh, band, diff2_size, debug=False):
@@ -378,33 +378,33 @@ def parse_inpcar(inpcar_fh, debug=False):
     p = re.search(r'^\s*(-*\d+\.\d+)\s+(-*\d+\.\d+)\s+(-*\d+\.\d+)', inpcar_fh.readline())
     if p:
         kpt = [float(p.group(1)), float(p.group(2)), float(p.group(3))]
-        if debug: print "Found k point in the reduced reciprocal space: %5.3f %5.3f %5.3f" % (kpt[0], kpt[1], kpt[2])
+        if debug: print(("Found k point in the reduced reciprocal space: %5.3f %5.3f %5.3f" % (kpt[0], kpt[1], kpt[2])))
     else:
-        print "Was expecting k point on the line 0 (3 floats), didn't get it, exiting..."
+        print("Was expecting k point on the line 0 (3 floats), didn't get it, exiting...")
         sys.exit(1)
 
     p = re.search(r'^\s*(\d+\.\d+)', inpcar_fh.readline())
     if p:
         stepsize = float(p.group(1))
-        if debug: print "Found stepsize of: %5.3f (1/Bohr)" % stepsize
+        if debug: print(("Found stepsize of: %5.3f (1/Bohr)" % stepsize))
     else:
-        print "Was expecting a stepsize on line 1 (1 float), didn't get it, exiting..."
+        print("Was expecting a stepsize on line 1 (1 float), didn't get it, exiting...")
         sys.exit(1)
 
     p = re.search(r'^\s*(\d+)', inpcar_fh.readline())
     if p:
         band = int(p.group(1))
-        if debug: print "Requested band is : %5d" % band
+        if debug: print(("Requested band is : %5d" % band))
     else:
-        print "Was expecting band number on line 2 (1 int), didn't get it, exiting..."
+        print("Was expecting band number on line 2 (1 int), didn't get it, exiting...")
         sys.exit(1)
 
     p = re.search(r'^\s*(\w)', inpcar_fh.readline())
     if p:
         prg = p.group(1)
-        if debug: print "Program identifier is: %5c" % prg
+        if debug: print(("Program identifier is: %5c" % prg))
     else:
-        print "Was expecting program identifier on line 3 (1 char), didn't get it, exiting..."
+        print("Was expecting program identifier on line 3 (1 char), didn't get it, exiting...")
         sys.exit(1)
 
     for i in range(3):
@@ -413,11 +413,11 @@ def parse_inpcar(inpcar_fh, debug=False):
             basis.append([float(p.group(1)), float(p.group(2)), float(p.group(3))])
 
     if debug: 
-        print "Real space basis:"
+        print("Real space basis:")
         for i in range(len(basis)):
-            print '%9.7f %9.7f %9.7f' % (basis[i][0], basis[i][1], basis[i][2])
+            print(('%9.7f %9.7f %9.7f' % (basis[i][0], basis[i][1], basis[i][2])))
 
-    if debug: print ''
+    if debug: print('')
 
     return kpt, stepsize, band, prg, basis
 
@@ -443,7 +443,7 @@ if __name__ == "__main__":
     import datetime
     import time
     filename = 'emcpy.out_'+str(int(time.time()))
-    print 'Redirecting output to '+filename
+    print(('Redirecting output to '+filename))
     sys.stdout = open(filename, 'w')
     #
     if STENCIL == 3:
@@ -453,19 +453,19 @@ if __name__ == "__main__":
         fd_effmass = fd_effmass_st5
         st = st5
     else:
-        print 'main: [ERROR] Wrong value for STENCIL, should be 3 or 5.'
+        print('main: [ERROR] Wrong value for STENCIL, should be 3 or 5.')
         sys.exit(1)
     #
-    print 'Effective mass calculator '+EMC_VERSION
-    print 'Stencil: '+str(STENCIL)
-    print 'License: MIT'
-    print 'Developed by: Alexandr Fonari and Chris Sutton'
-    print 'Started at: '+datetime.datetime.now().strftime("%Y-%m-%d %H:%M")+'\n'
+    print(('Effective mass calculator '+EMC_VERSION))
+    print(('Stencil: '+str(STENCIL)))
+    print('License: MIT')
+    print('Developed by: Alexandr Fonari and Chris Sutton')
+    print(('Started at: '+datetime.datetime.now().strftime("%Y-%m-%d %H:%M")+'\n'))
     #
     if len(sys.argv) == 1:
-        print "Run as:"
-        print "    %s input.in [output.out]" % sys.argv[0]
-        print ""
+        print("Run as:")
+        print(("    %s input.in [output.out]" % sys.argv[0]))
+        print("")
         sys.exit(1)
     inpcar_fn = sys.argv[1]
     #
@@ -474,11 +474,11 @@ if __name__ == "__main__":
     except IOError:
         sys.exit("Couldn't open input file "+inpcar_fn+", exiting...\n")
     #
-    print "Contents of the "+inpcar_fn+" file:\n"
-    print inpcar_fh.read()
-    print ""
-    print "=========="
-    print ""
+    print(("Contents of the "+inpcar_fn+" file:\n"))
+    print((inpcar_fh.read()))
+    print("")
+    print("==========")
+    print("")
     #
     kpt, stepsize, band, prg, basis = parse_inpcar(inpcar_fh)
     #
@@ -491,7 +491,7 @@ if __name__ == "__main__":
             sys.exit("Couldn't open input file "+output_fn+", exiting...\n")
     #
     if output_fn:
-        print 'Successfully opened '+output_fn+', preparing to parse it...\n'
+        print(('Successfully opened '+output_fn+', preparing to parse it...\n'))
         #
         energies = []
         if prg.upper() == 'V' or prg.upper() == 'C':
@@ -507,19 +507,19 @@ if __name__ == "__main__":
             m = fd_effmass(energies, stepsize)
         #
         masses, vecs_cart, vecs_frac, vecs_n = get_eff_masses(m, basis)
-        print 'Principle effective masses and directions:\n'
+        print('Principle effective masses and directions:\n')
         for i in range(3):
-            print 'Effective mass (%d): %12.3f' % (i, masses[i])
-            print 'Original eigenvectors: %7.5f %7.5f %7.5f' % (vecs_cart[i][0], vecs_cart[i][1], vecs_cart[i][2])
-            print 'Normal fractional coordinates: %7.5f %7.5f %7.5f\n' % (vecs_n[i][0], vecs_n[i][1], vecs_n[i][2])
+            print(('Effective mass (%d): %12.3f' % (i, masses[i])))
+            print(('Original eigenvectors: %7.5f %7.5f %7.5f' % (vecs_cart[i][0], vecs_cart[i][1], vecs_cart[i][2])))
+            print(('Normal fractional coordinates: %7.5f %7.5f %7.5f\n' % (vecs_n[i][0], vecs_n[i][1], vecs_n[i][2])))
     #
     else:
-        print 'No output file provided, entering the Generation regime...\n'
+        print('No output file provided, entering the Generation regime...\n')
         #
         if prg.upper() == "C" and band != 1:
-            print "    Band should be set to 1 for CRYSTAL calculations,"
-            print "    desired band number is set as a parameter (-b) for cry-getE.pl script."
-            print ""
+            print("    Band should be set to 1 for CRYSTAL calculations,")
+            print("    desired band number is set as a parameter (-b) for cry-getE.pl script.")
+            print("")
             sys.exit(1)
         #
         kpoints = generate_kpoints(kpt, st, stepsize, prg, basis)
@@ -532,4 +532,4 @@ if __name__ == "__main__":
             kpoints_fh.write( '%15.10f %15.10f %15.10f 0.01\n' % (kpt[0], kpt[1], kpt[2]) )
         #
         kpoints_fh.close()
-        print 'KPOINTS file has been generated in the current directory...\n'
+        print('KPOINTS file has been generated in the current directory...\n')
